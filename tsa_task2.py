@@ -74,7 +74,7 @@ base5 AS (SELECT CASE WHEN "Logged by" IN ('Claire Mangrum', 'Dr Fauzia Hasan Si
              OR LOWER("Entry Label") LIKE '%ns1%' OR LOWER("Entry Label") LIKE '%ns2%' OR LOWER("Entry Label") LIKE '%ns3%'
              OR LOWER("Entry Label") LIKE '%ns 1%' OR LOWER("Entry Label") LIKE '%ns 2%' OR LOWER("Entry Label") LIKE '%ns 3%')
              AND ("Duration in minutes" > 15) THEN "Please adjust the no show time to less than 15 minutes"
-            WHEN ("Logged by" NOT IN ('Claire Mangrum', 'Dr Fauzia Hasan Siddiqui', 'Dr. Rubi Garcha', 'Allison Houston', 'Erin Nelson', 'Thoywell Hemmings', 'Rakhshan Sharif')
+            WHEN ("Logged by" NOT IN ('Claire Mangrum', 'Dr Fauzia Hasan Siddiqui', 'Dr. Rubi Garcha', 'Allison Houston', 'Erin Nelson', 'Thoywell Hemmings', 'Rakhshan Sharif') AND LOWER("PS Number") LIKE '%administrative profile%'
              AND ("Entry Label" LIKE '%PS2%' OR "Entry Label" LIKE '%PS3%' OR "Entry Label" LIKE '%PS4%' OR "Entry Label" LIKE '%PS5%')) THEN "Sudent task booked in admin profile. Please rectify" 
             WHEN DATE("Entry Label") IS NOT NULL THEN "Blank entry - Please delete"
             WHEN LOWER("Entry Label") LIKE '%(date)%' THEN "Dummy entry - Please delete"
@@ -182,4 +182,5 @@ SELECT "PS Number",
         file_name="Final Output.xlsx",
         mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
     )
+
 
