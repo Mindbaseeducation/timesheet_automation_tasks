@@ -28,7 +28,7 @@ if t1 and t2 and t3:
     query = """
     WITH base1 AS (
     SELECT
-        CONCAT(TRIM("Student first"), ' ', TRIM("Student last")) AS "Student Full Name",
+        TRIM("Student first") || ' ' || TRIM("Student last") AS "Student Full Name",
         TRIM("Entry label") AS "Entry Label",
         TRIM("Date") AS "Date",
         CAST(TRIM("Duration in minutes") AS INT) AS "Duration in minutes",
@@ -112,3 +112,4 @@ FROM base4;
         file_name="Task 2 Input.xlsx",
         mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
     )
+
