@@ -53,7 +53,7 @@ base4 AS (SELECT "PS Number",
         "TL Remark"
         FROM base3),
 base5 AS (SELECT CASE WHEN "Logged by" IN ('Claire Mangrum', 'Dr Fauzia Hasan Siddiqui', 'Dr. Rubi Garcha', 'Allison Houston', 'Erin Nelson', 'Thoywell Hemmings', 'Rakhshan Sharif') 
-        THEN CONCAT("Logged by", ' - Administrative Profile')
+        THEN ("Logged by" || ' - Administrative Profile')
         ELSE "PS Number" END AS "PS Number",
         "Student Full Name",
         "Entry Label",
@@ -182,3 +182,4 @@ SELECT "PS Number",
         file_name="Final Output.xlsx",
         mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
     )
+
