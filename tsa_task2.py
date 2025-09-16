@@ -7,20 +7,18 @@ st.title("Timesheet Automation Task 2: Preliminary Validation & Audit Checks")
 
 # Upload 2 CSV/Excel tables
 t1 = st.file_uploader("Upload Task 2 Input file (CSV or Excel)", type=["csv", "xlsx"])
-t2 = st.file_uploader("Upload last month's Monthly Progress Report (CSV or Excel)", type=["csv", "xlsx"])
 
-if t1 and t2:
+if t1:
     # Helper function to load CSV/Excel
     def load_file(f):
         return pd.read_excel(f) if f.name.endswith("xlsx") else pd.read_csv(f)
 
     # Load all 2 files
-    df1, df2 = load_file(t1), load_file(t2)
+    df1 = load_file(t1)
 
     # Create SQLite in-memory DB
     conn = sqlite3.connect(":memory:")
     df1.to_sql("table1", conn, index=False, if_exists="replace")
-    df2.to_sql("table2", conn, index=False, if_exists="replace")
 
     # SQL Query
     query = """
@@ -167,6 +165,7 @@ SELECT "PS Number",
         file_name="Final Output.xlsx",
         mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
     )
+
 
 
 
