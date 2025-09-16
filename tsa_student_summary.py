@@ -56,14 +56,20 @@ SELECT DISTINCT b2."Logged by" AS Mentor,
     # SQL Query 2
     student_summary_query2 = """
 
-    SELECT t1."PS Number",
-        t1."Student Full Name" AS "Student Name",
+    WITH base1 AS (SELECT t2."ADEK Applicant ID",
+        t2."Student Name",
         t2.Country,
         SUM(t1."Duration in hours") AS "Advising Hours"
-    FROM table1 t1 LEFT JOIN table2 t2 
+    FROM table2 t2 LEFT JOIN table1 t1 
       ON t1."PS Number" = t2."ADEK Applicant ID"
-    WHERE LOWER(t1."PS Number") NOT LIKE '%administrative profile%'
-    GROUP BY 1,2,3;
+    GROUP BY 1,2,3)
+    
+    SELECT "ADEK Applicant ID",
+    "Student Name",
+    "Country",
+    CASE WHEN LENGTH(TRIM("Advising Hours")) > 0 THEN "Advising Hours" 
+      ELSE 0 END AS "Advising Hours" 
+    FROM base1;
     
     """
 
@@ -90,3 +96,4 @@ SELECT DISTINCT b2."Logged by" AS Mentor,
         file_name="Payroll File.xlsx",
         mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
     )
+
