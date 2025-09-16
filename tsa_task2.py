@@ -127,8 +127,8 @@ base8 AS (SELECT "PS Number",
              AND ("Duration in hours" > 0) THEN "Rectify the hours entered for this no show entry"
       ELSE "Audit Remark" END AS "Audit Remark",
      "TL Remark"
-    FROM base7),
-base9 AS (SELECT "PS Number",
+    FROM base7)
+SELECT "PS Number",
      "Student Full Name",
      "Entry Label",
       Date,
@@ -142,23 +142,8 @@ base9 AS (SELECT "PS Number",
      "Logged by",
      "Team Lead",
      "Audit Remark",
-     "TL Remark",
-     TRIM(t2."Mentor Name") AS "Mentor Name"
-    FROM base8 b8 LEFT JOIN table2 t2 
-    ON b8."PS Number" = t2."Student ADEK Application ID")
-SELECT "PS Number",
-     "Student Full Name",
-     "Entry Label",
-      Date,
-     "Duration in minutes",
-     "Duration in hours",
-     "Billable / Non Billable",
-      Category,
-     "Logged by",
-     "Team Lead",
-     "Audit Remark",
      "TL Remark"
-    FROM base9;
+    FROM base8;
     
     """
 
@@ -182,6 +167,7 @@ SELECT "PS Number",
         file_name="Final Output.xlsx",
         mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
     )
+
 
 
 
