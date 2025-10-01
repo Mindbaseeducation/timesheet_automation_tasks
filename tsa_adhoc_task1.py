@@ -27,7 +27,6 @@ WITH base1 AS (SELECT "Logged by",
         SUM("Duration in hours") AS "Total hours"
     FROM sharepoint_table
     WHERE "Logged by" NOT IN ('Claire Mangrum', 'Dr Fauzia Hasan Siddiqui', 'Dr. Rubi Garcha', 'Allison Houston', 'Erin Nelson', 'Thoywell Hemmings', 'Rakhshan Sharif')
-    AND "Billable / Non Billable" <> "Non Billable"
     GROUP BY 1,2)
 SELECT *,
        CASE WHEN "Total hours" > 6 
@@ -58,4 +57,5 @@ SELECT *,
         file_name="Mentor Flagged for > 6 hours.xlsx",
         mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
     )
+
 
