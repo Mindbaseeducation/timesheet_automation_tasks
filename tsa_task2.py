@@ -31,7 +31,7 @@ base2 AS (SELECT *
         WHERE CAST(STRFTIME('%m', "Date") AS INT) = CAST(STRFTIME('%m', DATE('now', '-1 month')) AS INT)),
 base3 AS (SELECT *
     FROM base2
-    WHERE "Logged by" IN ('Claire Mangrum', 'Dr Fauzia Hasan Siddiqui', 'Dr. Rubi Garcha', 'Allison Houston', 'Erin Nelson', 'Thoywell Hemmings', 'Rakhshan Sharif')
+    WHERE "Logged by" IN ('Claire Mangrum', 'Dr Fauzia Hasan Siddiqui', 'Dr. Rubi Garcha', 'Allison Houston', 'Erin Nelson', 'Thoywell Hemmings', 'Anna Cleto')
     OR LOWER("Entry Label") NOT LIKE '%timesheet%'),
 base4 AS (SELECT "PS Number",
         "Student Full Name",
@@ -50,7 +50,7 @@ base4 AS (SELECT "PS Number",
             ELSE "Audit Remark" END AS "Audit Remark",
         "TL Remark"
         FROM base3),
-base5 AS (SELECT CASE WHEN "Logged by" IN ('Claire Mangrum', 'Dr Fauzia Hasan Siddiqui', 'Dr. Rubi Garcha', 'Allison Houston', 'Erin Nelson', 'Thoywell Hemmings', 'Rakhshan Sharif') 
+base5 AS (SELECT CASE WHEN "Logged by" IN ('Claire Mangrum', 'Dr Fauzia Hasan Siddiqui', 'Dr. Rubi Garcha', 'Allison Houston', 'Erin Nelson', 'Thoywell Hemmings', 'Anna Cleto') 
         THEN ("Logged by" || ' - Administrative Profile')
         ELSE "PS Number" END AS "PS Number",
         "Student Full Name",
@@ -72,7 +72,7 @@ base5 AS (SELECT CASE WHEN "Logged by" IN ('Claire Mangrum', 'Dr Fauzia Hasan Si
              OR LOWER("Entry Label") LIKE '%ns1%' OR LOWER("Entry Label") LIKE '%ns2%' OR LOWER("Entry Label") LIKE '%ns3%'
              OR LOWER("Entry Label") LIKE '%ns 1%' OR LOWER("Entry Label") LIKE '%ns 2%' OR LOWER("Entry Label") LIKE '%ns 3%')
              AND ("Duration in minutes" > 15) THEN "Please adjust the no show time to less than 15 minutes"
-            WHEN ("Logged by" NOT IN ('Claire Mangrum', 'Dr Fauzia Hasan Siddiqui', 'Dr. Rubi Garcha', 'Allison Houston', 'Erin Nelson', 'Thoywell Hemmings', 'Rakhshan Sharif') AND LOWER("PS Number") LIKE '%administrative profile%'
+            WHEN ("Logged by" NOT IN ('Claire Mangrum', 'Dr Fauzia Hasan Siddiqui', 'Dr. Rubi Garcha', 'Allison Houston', 'Erin Nelson', 'Thoywell Hemmings', 'Anna Cleto') AND LOWER("PS Number") LIKE '%administrative profile%'
              AND ("Entry Label" LIKE '%PS2%' OR "Entry Label" LIKE '%PS3%' OR "Entry Label" LIKE '%PS4%' OR "Entry Label" LIKE '%PS5%')) THEN "Student task booked in admin profile. Please rectify" 
             WHEN DATE("Entry Label") IS NOT NULL THEN "Blank entry - Please delete"
             WHEN LOWER("Entry Label") LIKE '%(date)%' THEN "Dummy entry - Please delete"
@@ -96,7 +96,7 @@ base7 AS (SELECT "PS Number",
      "Team Lead",
      CASE WHEN "Audit Remark" = "Please rectify the AM/PM Error" 
        THEN "Please rectify the AM/PM Error"
-     WHEN hours_summer > 3.5 AND LOWER("PS Number") NOT LIKE '%administrative profile%' AND "Logged by" NOT IN ('Claire Mangrum', 'Dr Fauzia Hasan Siddiqui', 'Dr. Rubi Garcha', 'Allison Houston', 'Erin Nelson', 'Thoywell Hemmings', 'Rakhshan Sharif')
+     WHEN hours_summer > 3.5 AND LOWER("PS Number") NOT LIKE '%administrative profile%' AND "Logged by" NOT IN ('Claire Mangrum', 'Dr Fauzia Hasan Siddiqui', 'Dr. Rubi Garcha', 'Allison Houston', 'Erin Nelson', 'Thoywell Hemmings', 'Anna Cleto')
        THEN "Rectify the total time entered for this student"
      ELSE "Audit Remark"
      END AS "Audit Remark",
@@ -165,6 +165,7 @@ SELECT "PS Number",
         file_name="Final Output.xlsx",
         mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
     )
+
 
 
 
