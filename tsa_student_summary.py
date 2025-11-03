@@ -8,19 +8,21 @@ st.title("Timesheet Automation Task 4: Consolidated Student Summary")
 # Upload 2 CSV/Excel tables
 t1 = st.file_uploader("Upload Final Output File (CSV or Excel)", type=["csv", "xlsx"])
 t2 = st.file_uploader("Upload Master Data File for Country Mapping (CSV or Excel)", type=["csv", "xlsx"])
+t3 = st.file_uploader("Upload Last month's MPR for Student 1:1 Session Mapping (CSV or Excel)", type=["csv", "xlsx"])
 
-if t1 and t2:
+if t1 and t2 and t3:
     # Helper function to load CSV/Excel
     def load_file(f):
         return pd.read_excel(f) if f.name.endswith("xlsx") else pd.read_csv(f)
 
     # Load all 2 files
-    df1, df2 = load_file(t1), load_file(t2)
+    df1, df2, df3 = load_file(t1), load_file(t2), load_file(t3)
 
     # Create SQLite in-memory DB
     conn = sqlite3.connect(":memory:")
     df1.to_sql("table1", conn, index=False, if_exists="replace")
     df2.to_sql("table2", conn, index=False, if_exists="replace")
+    df3.to_sql("table3", conn, index=False, if_exists="replace")
 
     # SQL Query 1
     summary_query1 = """
@@ -64,12 +66,14 @@ SELECT DISTINCT b2."Logged by" AS Mentor,
       ON t1."PS Number" = t2."ADEK Applicant ID"
     GROUP BY 1,2,3)
     
-    SELECT "ADEK Applicant ID",
-    "Student Name",
-    "Country",
+    SELECT b1."ADEK Applicant ID",
+    b1."Student Name",
+    b1."Country",
+    t3."Date of meeting with student",
     CASE WHEN LENGTH(TRIM("Advising Hours")) > 0 THEN "Advising Hours" 
       ELSE 0 END AS "Advising Hours" 
-    FROM base1;
+    FROM base1 b1 LEFT JOIN table3 t3
+      ON b1."ADEK Applicant ID" = t3."Student ADEK Application ID";
     
     """
 
@@ -96,4 +100,3 @@ SELECT DISTINCT b2."Logged by" AS Mentor,
         file_name="Payroll File.xlsx",
         mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
     )
-
