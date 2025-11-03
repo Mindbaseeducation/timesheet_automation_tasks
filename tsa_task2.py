@@ -43,9 +43,9 @@ base4 AS (SELECT "PS Number",
         "Category",
         "Logged by",
         "Team Lead",
-         CASE WHEN LOWER("Entry Label") LIKE '%august%' 
-             OR LOWER("Entry Label") LIKE '%september%' 
-             OR LOWER("Entry Label") LIKE '%november%' THEN "Task pertaining to previous or next month will not be paid"
+         CASE WHEN LOWER("Entry Label") LIKE '%aug%' 
+             OR LOWER("Entry Label") LIKE '%sept%' 
+             OR LOWER("Entry Label") LIKE '%nov%' THEN "Task pertaining to previous or next month will not be paid"
             WHEN "Duration in hours" > 12 THEN "Please rectify the AM/PM Error"
             ELSE "Audit Remark" END AS "Audit Remark",
         "TL Remark"
@@ -164,6 +164,7 @@ SELECT "PS Number",
         file_name="Final Output.xlsx",
         mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
     )
+
 
 
 
