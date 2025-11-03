@@ -28,7 +28,7 @@ if t1 and t2 and t3:
     summary_query1 = """
 
 WITH base1 AS (SELECT "Current Mentor", 
-    COUNT(DISTINCT "ADEK Applicant ID") AS "No. of Students" 
+    COUNT(DISTINCT "ADEK Applicant ID") AS "No. of Students Allocated" 
     FROM table2
     GROUP BY 1),
 base2 AS (SELECT "Logged by",
@@ -38,7 +38,7 @@ base2 AS (SELECT "Logged by",
     FROM table1)
 SELECT DISTINCT b2."Logged by" AS Mentor,
     b2."Team Lead",
-    b1."No. of Students",
+    b1."No. of Students Allocated",
     b1."No. of Students"*2.5 AS "Standard Hour / Student (2.5 hours)",
     '' AS "No. of Student Transitioned",
     '' AS "Allocated hours for transition (1.5 hours)",
@@ -100,4 +100,5 @@ SELECT DISTINCT b2."Logged by" AS Mentor,
         file_name="Payroll File.xlsx",
         mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
     )
+
 
