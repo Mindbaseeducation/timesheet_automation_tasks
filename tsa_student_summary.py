@@ -46,8 +46,8 @@ SELECT DISTINCT b2."Logged by" AS Mentor,
     "Billable Hours" AS "Billable",
     "Non Billable Hours" AS "Non Billable",
     "Billable Hours" + "Non Billable Hours" AS Total,
-    '' AS "Hours to be paid for Aug 2025",
-    '' AS "Hours to be paid for July 2025",
+    '' AS "Hours to be paid for October 2025",
+    '' AS "Hours to be paid for September 2025",
     '' AS "Total Payment",
     '' AS "HQ Remark"
     FROM base2 b2 LEFT JOIN base1 b1 
@@ -100,3 +100,4 @@ SELECT DISTINCT b2."Logged by" AS Mentor,
         file_name="Payroll File.xlsx",
         mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
     )
+
