@@ -31,11 +31,11 @@ WITH base1 AS (SELECT "Logged by",
     FROM table1
     WHERE "Logged by" NOT IN ('Claire Mangrum', 'Dr Fauzia Hasan Siddiqui', 'Dr. Rubi Garcha', 'Allison Houston', 'Erin Nelson', 'Thoywell Hemmings')
     GROUP BY 1,2)
-SELECT *,
-       CASE WHEN "Total hours" > 6 AND "Logged by" IN (SELECT Mentor FROM table2 WHERE "Mentor Status" = "Part Time")
+SELECT b1.*, t2."Team Lead",
+       CASE WHEN b1."Total hours" > 6 AND b1."Logged by" IN (SELECT Mentor FROM table2 WHERE "Mentor Status" = "Part Time")
        THEN "Part Time Mentor spent more than 6 hours on the students on this day. Please review"
        END AS "HQ Remark"
-    FROM base1
+    FROM base1 b1 LEFT JOIN table2 t2 ON b1."Logged by" = t2.Mentor
     ORDER BY 1,2;
 
     """
@@ -60,3 +60,4 @@ SELECT *,
         file_name="PT Mentor Flagged for more than 6 hours.xlsx",
         mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
     )
+
