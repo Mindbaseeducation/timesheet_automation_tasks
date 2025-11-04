@@ -18,7 +18,7 @@ if t1:
 
     # Create SQLite in-memory DB
     conn = sqlite3.connect(":memory:")
-    df1.to_sql("table1", conn, index=False, if_exists="replace")
+    df1.to_sql("table1", conn, index=False, if_exists="replace")  # WHERE CAST(STRFTIME('%m', "Date") AS INT) = CAST(STRFTIME('%m', DATE('now', '-1 month')) AS INT)
 
     # SQL Query
     query = """
@@ -28,7 +28,7 @@ WITH base1 AS (
         WHERE LENGTH("Entry Label") > 0 OR "Duration in minutes" <> 0),
 base2 AS (SELECT *
         FROM base1
-        WHERE CAST(STRFTIME('%m', "Date") AS INT) = CAST(STRFTIME('%m', DATE('now', '-1 month')) AS INT)),
+        ),
 base3 AS (SELECT *
     FROM base2
     WHERE "Logged by" IN ('Claire Mangrum', 'Dr Fauzia Hasan Siddiqui', 'Dr. Rubi Garcha', 'Allison Houston', 'Erin Nelson', 'Thoywell Hemmings', 'Anna Cleto')
@@ -62,7 +62,7 @@ base5 AS (SELECT CASE WHEN "Logged by" IN ('Claire Mangrum', 'Dr Fauzia Hasan Si
              OR LOWER("Entry Label") LIKE '%ns1%' OR LOWER("Entry Label") LIKE '%ns2%' OR LOWER("Entry Label") LIKE '%ns3%'
              OR LOWER("Entry Label") LIKE '%ns 1%' OR LOWER("Entry Label") LIKE '%ns 2%' OR LOWER("Entry Label") LIKE '%ns 3%' THEN "Non Billable"
             ELSE "Billable / Non Billable" END AS "Billable / Non Billable",
-        CASE WHEN LOWER("Entry Label") LIKE '%no show%'
+        CASE WHEN LOWER("Entry Label") LIKE '%no show%' OR LOWER("Entry Label") = 'missed meeting'
              OR LOWER("Entry Label") LIKE '%ns1%' OR LOWER("Entry Label") LIKE '%ns2%' OR LOWER("Entry Label") LIKE '%ns3%'
              OR LOWER("Entry Label") LIKE '%ns 1%' OR LOWER("Entry Label") LIKE '%ns 2%' OR LOWER("Entry Label") LIKE '%ns 3%' THEN "No Show"
             ELSE "Category" END AS "Category",
@@ -79,7 +79,6 @@ base5 AS (SELECT CASE WHEN "Logged by" IN ('Claire Mangrum', 'Dr Fauzia Hasan Si
             ELSE "Audit Remark" END AS "Audit Remark",
         "TL Remark"
         FROM base4),
-
 
 base6 AS (SELECT *, 
      SUM("Duration in hours") OVER (PARTITION BY "PS Number") AS hours_summer 
@@ -109,7 +108,7 @@ base8 AS (SELECT "PS Number",
      "Duration in minutes",
      "Duration in hours",
      "Billable / Non Billable",
-      CASE WHEN (LOWER("Entry Label") NOT LIKE '%no show%'
+      CASE WHEN (LOWER("Entry Label") NOT LIKE '%no show%' AND LOWER("Entry Label") <> 'missed meeting'
         AND LOWER("Entry Label") NOT LIKE '%ns1%' AND LOWER("Entry Label") NOT LIKE '%ns2%' AND LOWER("Entry Label") NOT LIKE '%ns3%'
         AND LOWER("Entry Label") NOT LIKE '%ns 1%' AND LOWER("Entry Label") NOT LIKE '%ns 2%' AND LOWER("Entry Label") NOT LIKE '%ns 3%')
         AND LOWER("PS Number") NOT LIKE '%administrative%' THEN 'Student Task'
@@ -133,12 +132,18 @@ SELECT "PS Number",
      "Duration in hours",
      CASE WHEN "Billable / Non Billable" NOT IN ("Non Billable") THEN "Billable"
       ELSE "Billable / Non Billable" END AS "Billable / Non Billable",
-     CASE WHEN (LOWER("Entry Label") LIKE '%1:1%' OR LOWER("Entry Label") LIKE '%1 to 1%' OR LOWER("Entry Label") LIKE '%1-1%') AND Category NOT IN ("Administrative Task", "No Show") THEN 'Student Session' 
+     CASE WHEN (LOWER("Entry Label") = 'student task' OR LOWER("Entry Label") LIKE '%student comm%') AND Category NOT IN ("Administrative Task", "No Show") THEN "Student Task"
+      WHEN (LOWER("Entry Label") = 'mpr' OR LOWER("Entry Label") LIKE '%report%') AND LOWER("Entry Label") NOT LIKE '%student task%' AND Category NOT IN ("No Show") THEN "Administrative Task"
+      WHEN (LOWER("Entry Label") LIKE '%1:1%' OR LOWER("Entry Label") LIKE '%1 to 1%' OR LOWER("Entry Label") LIKE '%1-1%' OR LOWER("Entry Label") LIKE '%1 on 1%' OR LOWER("Entry Label") LIKE '%session%') AND Category NOT IN ("Administrative Task", "No Show") THEN "Student Session" 
       WHEN LOWER("Entry Label") LIKE '%whatsapp%' AND Category NOT IN ("Administrative Task", "No Show", "Student Session") THEN "Whatsapp Communication"
       ELSE Category END AS Category,
      "Logged by",
      "Team Lead",
-     "Audit Remark",
+     CASE WHEN Category = "No Show" AND LENGTH(TRIM("Entry Label")) > 15 THEN "Please adjust the entry label as per SOP"
+     WHEN LOWER("Entry Label") = 'missed meeting' THEN "Rectify the entry label as per SOP"
+     WHEN (LOWER("Entry Label") = 'mpr' OR LOWER("Entry Label") LIKE '%report%') AND LOWER("PS Number") NOT LIKE '%administrative profile%' THEN "Reporting needs to be in Admin Profile"
+     WHEN (LOWER("Entry Label") LIKE '%student task%' OR LOWER("Entry Label") LIKE '%student comm%') AND LOWER("PS Number") LIKE '%administrative profile%' THEN "Student task booked in admin profile. Please rectify"
+     ELSE "Audit Remark" END AS "Audit Remark",
      "TL Remark"
     FROM base8;
     
@@ -164,6 +169,7 @@ SELECT "PS Number",
         file_name="Final Output.xlsx",
         mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
     )
+
 
 
 
