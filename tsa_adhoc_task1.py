@@ -22,8 +22,9 @@ if t1 and t2:
     df1.to_sql("table1", conn, index=False, if_exists="replace")
     df2.to_sql("table2", conn, index=False, if_exists="replace")
 
-    # SQL Query
-    query = """
+    # SQL Queries
+    
+    query1 = """
 WITH base1 AS (SELECT "Logged by", 
         Date,
         SUM("Duration in minutes") AS "Total minutes",
@@ -40,16 +41,35 @@ SELECT b1.*, t2."Team Lead",
 
     """
 
+    query2 = """
+WITH base1 AS (SELECT "PS Number", 
+        COUNT(*) AS "No Show Count"
+    FROM table1
+      WHERE LOWER("PS Number") NOT LIKE '%administrative profile%'
+        AND (LOWER("Entry Label") LIKE '%no show%' OR LOWER("Entry Label") = 'missed meeting'
+             OR LOWER("Entry Label") LIKE '%ns1%' OR LOWER("Entry Label") LIKE '%ns2%' OR LOWER("Entry Label") LIKE '%ns3%'
+             OR LOWER("Entry Label") LIKE '%ns 1%' OR LOWER("Entry Label") LIKE '%ns 2%' OR LOWER("Entry Label") LIKE '%ns 3%')
+    GROUP BY 1)
+
+SELECT *, 
+       CASE WHEN "No Show Count" > 2 THEN "No show count for this student > 2. Please rectify the entry as per the SOP." END AS "Audit Remark"
+    FROM base1;
+    
+    """
+
     # Run query
-    result_df = pd.read_sql_query(query, conn)
+    result_df1 = pd.read_sql_query(query1, conn)
+    result_df2 = pd.read_sql_query(query2, conn)
 
     st.subheader("Filtered Result")
-    st.dataframe(result_df)
+    st.dataframe(result_df1)
+    st.dataframe(result_df2)
 
     # Create Excel file in memory
     output = BytesIO()
     with pd.ExcelWriter(output, engine="xlsxwriter") as writer:
-        result_df.to_excel(writer, index=False, sheet_name="Data")
+        result_df1.to_excel(writer, index=False, sheet_name="PT Mentors time > 6 hours")
+        result_df2.to_excel(writer, index=False, sheet_name="No Show Entries > 2")
 
     excel_data = output.getvalue()
 
@@ -57,7 +77,6 @@ SELECT b1.*, t2."Team Lead",
     st.download_button(
         label="📥 Download Result as Excel",
         data=excel_data,
-        file_name="PT Mentor Flagged for more than 6 hours.xlsx",
+        file_name="Mentor Flag more than 6 Hrs and No Show Flag more than 2.xlsx",
         mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
     )
-
