@@ -117,10 +117,6 @@ base8 AS (SELECT "PS Number",
      "Team Lead",
       CASE WHEN LOWER("Entry Label") LIKE '%no response%' AND "Duration in minutes" > 0 THEN "Rectify the minutes entered for no response"
       WHEN "Audit Remark" = "Please adjust the no show time to less than 15 minutes" THEN "Please adjust the no show time to less than 15 minutes"
-      WHEN (LOWER("Entry Label") LIKE '%no show%'
-             OR LOWER("Entry Label") LIKE '%ns1%' OR LOWER("Entry Label") LIKE '%ns2%' OR LOWER("Entry Label") LIKE '%ns3%'
-             OR LOWER("Entry Label") LIKE '%ns 1%' OR LOWER("Entry Label") LIKE '%ns 2%' OR LOWER("Entry Label") LIKE '%ns 3%') 
-             AND ("Duration in hours" > 0) THEN "Rectify the hours entered for this no show entry"
       ELSE "Audit Remark" END AS "Audit Remark",
      "TL Remark"
     FROM base7)
@@ -169,6 +165,7 @@ SELECT "PS Number",
         file_name="Final Output.xlsx",
         mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
     )
+
 
 
 
