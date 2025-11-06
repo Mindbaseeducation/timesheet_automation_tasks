@@ -41,7 +41,7 @@ base2 AS (SELECT "Logged by",
     SUM(CASE WHEN "Billable / Non Billable" = "Non Billable" THEN "Duration in hours" ELSE 0 END) OVER (PARTITION BY "Logged by") AS "Non Billable Hours"
     FROM table1)
 SELECT DISTINCT b2."Logged by" AS Mentor,
-    t5."Mentor Status",
+    t5."Mentor Status" AS "Employment Type",
     b2."Team Lead",
     b1."No. of Students",
     b1."No. of Students"*2.5 AS "Standard Hour / Student (2.5 hours)",
@@ -111,3 +111,4 @@ SELECT DISTINCT b2."Logged by" AS Mentor,
         file_name="Payroll File.xlsx",
         mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
     )
+
