@@ -165,18 +165,3 @@ SELECT "PS Number",
         file_name="Final Output.xlsx",
         mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
     )
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
