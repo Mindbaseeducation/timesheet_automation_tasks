@@ -3,7 +3,7 @@ import pandas as pd
 import sqlite3
 from io import BytesIO
 
-st.title("Timesheet Automation Task 3: Part-Time Mentors Workload Flagging (Exceeding 6 Hours/Day)")
+st.title("Timesheet Automation Task 3: Part-Time Mentors Workload Flagging (Exceeding 8 Hours/Day)")
 
 # Upload only 1 file
 t1 = st.file_uploader("Upload Final Output file (CSV or Excel)", type=["csv", "xlsx"])
@@ -80,4 +80,5 @@ SELECT *,
         file_name="Mentor Flag more than 8 Hrs and No Show Flag more than 2.xlsx",
         mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
     )
+
 
