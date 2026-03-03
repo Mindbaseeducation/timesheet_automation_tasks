@@ -75,7 +75,7 @@ base5 AS (SELECT CASE WHEN "Logged by" IN ('Claire Mangrum', 'Dr Fauzia Hasan Si
             WHEN ("Logged by" NOT IN ('Claire Mangrum', 'Dr Fauzia Hasan Siddiqui', 'Dr. Rubi Garcha', 'Allison Houston', 'Erin Nelson', 'Thoywell Hemmings', 'Anna Cleto') AND LOWER("PS Number") LIKE '%administrative profile%'
              AND ("Entry Label" LIKE '%PS2%' OR "Entry Label" LIKE '%PS3%' OR "Entry Label" LIKE '%PS4%' OR "Entry Label" LIKE '%PS5%')) THEN "Student task booked in admin profile. Please rectify" 
             WHEN DATE("Entry Label") IS NOT NULL THEN "Blank entry - Please delete"
-            WHEN LOWER("Entry Label") LIKE '%(date)%' THEN "Dummy entry - Please delete"
+            WHEN LOWER("Entry Label") LIKE '%(date)%' THEN "Dummy entry - Disapproved for payment"
             ELSE "Audit Remark" END AS "Audit Remark",
         "TL Remark"
         FROM base4),
@@ -165,4 +165,5 @@ SELECT "PS Number",
         file_name="Final Output.xlsx",
         mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
     )
+
 
