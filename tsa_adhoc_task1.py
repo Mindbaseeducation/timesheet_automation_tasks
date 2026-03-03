@@ -33,8 +33,8 @@ WITH base1 AS (SELECT "Logged by",
     WHERE "Logged by" NOT IN ('Claire Mangrum', 'Dr Fauzia Hasan Siddiqui', 'Dr. Rubi Garcha', 'Allison Houston', 'Erin Nelson', 'Thoywell Hemmings')
     GROUP BY 1,2)
 SELECT b1.*, t2."Team Lead",
-       CASE WHEN b1."Total hours" > 6 AND b1."Logged by" IN (SELECT Mentor FROM table2 WHERE "Mentor Status" = "Part Time")
-       THEN "Part Time Mentor spent more than 6 hours on the students on this day. Please review"
+       CASE WHEN b1."Total hours" > 8 AND b1."Logged by" IN (SELECT Mentor FROM table2 WHERE "Mentor Status" = "Part Time")
+       THEN "Part Time Mentor spent more than 8 hours on the students on this day. Please review"
        END AS "HQ Remark"
     FROM base1 b1 LEFT JOIN table2 t2 ON b1."Logged by" = t2.Mentor
     ORDER BY 1,2;
@@ -68,7 +68,7 @@ SELECT *,
     # Create Excel file in memory
     output = BytesIO()
     with pd.ExcelWriter(output, engine="xlsxwriter") as writer:
-        result_df1.to_excel(writer, index=False, sheet_name="PT Mentors time > 6 hours")
+        result_df1.to_excel(writer, index=False, sheet_name="PT Mentors time > 8 hours")
         result_df2.to_excel(writer, index=False, sheet_name="No Show Entries > 2")
 
     excel_data = output.getvalue()
@@ -77,6 +77,7 @@ SELECT *,
     st.download_button(
         label="📥 Download Result as Excel",
         data=excel_data,
-        file_name="Mentor Flag more than 6 Hrs and No Show Flag more than 2.xlsx",
+        file_name="Mentor Flag more than 8 Hrs and No Show Flag more than 2.xlsx",
         mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
     )
+
