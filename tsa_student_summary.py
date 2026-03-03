@@ -76,7 +76,10 @@ SELECT DISTINCT b2."Logged by" AS Mentor,
     t3."Mentor Name",
     t3."Team Leader Name",
     b1."Country",
-    CASE WHEN t3."Date of meeting with student" > t4."Date of meeting with student" THEN t3."Date of meeting with student" ELSE t4."Date of meeting with student" END AS "Last Date of meeting with student",
+    CASE WHEN t3."Date of meeting with student" > t4."Date of meeting with student" THEN t3."Date of meeting with student" ELSE t4."Date of meeting with student" 
+        WHEN LENGTH(t3."Date of meeting with student") > 0 AND LENGTH(t4."Date of meeting with student") = 0 THEN t3."Date of meeting with student"
+        WHEN LENGTH(t4."Date of meeting with student") > 0 AND LENGTH(t3."Date of meeting with student") = 0 THEN t4."Date of meeting with student"
+        END AS "Last Date of meeting with student",
     CASE WHEN LENGTH(TRIM("Advising Hours")) > 0 THEN "Advising Hours" 
       ELSE 0 END AS "Advising Hours" 
     FROM base1 b1 LEFT JOIN table3 t3
@@ -109,6 +112,7 @@ SELECT DISTINCT b2."Logged by" AS Mentor,
         file_name="Payroll File.xlsx",
         mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
     )
+
 
 
 
