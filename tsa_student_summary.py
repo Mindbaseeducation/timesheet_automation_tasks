@@ -95,8 +95,7 @@ SELECT Mentor,
         WHEN t3."Date of meeting with student" > t4."Date of meeting with student" THEN t3."Date of meeting with student"
         ELSE t4."Date of meeting with student"
         END AS "Last Date of meeting with student",
-    CASE WHEN LENGTH(TRIM("Advising Hours")) > 0 THEN "Advising Hours" 
-      ELSE 0 END AS "Advising Hours" 
+    COALESCE(b1."Advising Hours", 0) AS "Advising Hours"
     FROM base1 b1 LEFT JOIN table3 t3
         ON b1."ADEK Applicant ID" = t3."Student ADEK Applicant ID"
                   LEFT JOIN table4 t4
@@ -127,3 +126,4 @@ SELECT Mentor,
         file_name="Payroll File.xlsx",
         mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
     )
+
