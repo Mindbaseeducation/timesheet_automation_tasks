@@ -46,7 +46,6 @@ SELECT DISTINCT b2."Logged by" AS Mentor,
     b1."No. of Students",
     b1."No. of Students"*2.5 AS "Standard Hour / Student (2.5 hours)",
     '' AS "No. of Student Transitioned",
-    '' AS "Allocated hours for transition (1.5 hours)",
     '' AS "Total Time",
     "Billable Hours" AS "Billable",
     "Non Billable Hours" AS "Non Billable",
@@ -112,6 +111,7 @@ SELECT DISTINCT b2."Logged by" AS Mentor,
         file_name="Payroll File.xlsx",
         mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
     )
+
 
 
 
