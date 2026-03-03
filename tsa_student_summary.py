@@ -80,9 +80,9 @@ SELECT DISTINCT b2."Logged by" AS Mentor,
     CASE WHEN LENGTH(TRIM("Advising Hours")) > 0 THEN "Advising Hours" 
       ELSE 0 END AS "Advising Hours" 
     FROM base1 b1 LEFT JOIN table3 t3
-        ON b1."ADEK Applicant ID" = t3."Student ADEK Application ID"
+        ON b1."ADEK Applicant ID" = t3."Student ADEK Applicant ID"
                   LEFT JOIN table4 t4
-        ON b1."ADEK Applicant ID" = t4."Student ADEK Application ID";
+        ON b1."ADEK Applicant ID" = t4."Student ADEK Applicant ID";
     
     """
 
@@ -109,5 +109,6 @@ SELECT DISTINCT b2."Logged by" AS Mentor,
         file_name="Payroll File.xlsx",
         mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
     )
+
 
 
