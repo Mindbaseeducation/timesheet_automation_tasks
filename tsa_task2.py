@@ -71,7 +71,7 @@ base5 AS (SELECT CASE WHEN "Logged by" IN ('Claire Mangrum', 'Dr Fauzia Hasan Si
         CASE WHEN (LOWER("Entry Label") LIKE '%no show%'
              OR LOWER("Entry Label") LIKE '%ns1%' OR LOWER("Entry Label") LIKE '%ns2%' OR LOWER("Entry Label") LIKE '%ns3%'
              OR LOWER("Entry Label") LIKE '%ns 1%' OR LOWER("Entry Label") LIKE '%ns 2%' OR LOWER("Entry Label") LIKE '%ns 3%')
-             AND ("Duration in minutes" > 15) THEN "Please adjust the no show time to less than 15 minutes"
+             AND ("Duration in minutes" > 20) THEN "No show > 20 min - Disapproved for payment"
             WHEN ("Logged by" NOT IN ('Claire Mangrum', 'Dr Fauzia Hasan Siddiqui', 'Dr. Rubi Garcha', 'Allison Houston', 'Erin Nelson', 'Thoywell Hemmings', 'Anna Cleto') AND LOWER("PS Number") LIKE '%administrative profile%'
              AND ("Entry Label" LIKE '%PS2%' OR "Entry Label" LIKE '%PS3%' OR "Entry Label" LIKE '%PS4%' OR "Entry Label" LIKE '%PS5%')) THEN "Student task booked in admin profile. Please rectify" 
             WHEN DATE("Entry Label") IS NOT NULL THEN "Blank entry - Please delete"
@@ -116,7 +116,7 @@ base8 AS (SELECT "PS Number",
      "Logged by",
      "Team Lead",
       CASE WHEN LOWER("Entry Label") LIKE '%no response%' AND "Duration in minutes" > 0 THEN "Rectify the minutes entered for no response"
-      WHEN "Audit Remark" = "Please adjust the no show time to less than 15 minutes" THEN "Please adjust the no show time to less than 15 minutes"
+      WHEN "Audit Remark" = "No show > 20 min - Disapproved for payment" THEN "No show > 20 min - Disapproved for payment"
       ELSE "Audit Remark" END AS "Audit Remark",
      "TL Remark"
     FROM base7)
@@ -165,5 +165,6 @@ SELECT "PS Number",
         file_name="Final Output.xlsx",
         mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
     )
+
 
 
