@@ -39,8 +39,8 @@ base2 AS (SELECT "Logged by",
     "Team Lead",
     SUM(CASE WHEN "Billable / Non Billable" = "Billable" THEN "Duration in hours" ELSE 0 END) OVER (PARTITION BY "Logged by") AS "Billable Hours",
     SUM(CASE WHEN "Billable / Non Billable" = "Non Billable" THEN "Duration in hours" ELSE 0 END) OVER (PARTITION BY "Logged by") AS "Non Billable Hours"
-    FROM table1)
-SELECT DISTINCT b2."Logged by" AS Mentor,
+    FROM table1),
+base3 AS (SELECT DISTINCT b2."Logged by" AS Mentor,
     t5."Mentor Status" AS "Employment Type",
     b2."Team Lead",
     b1."No. of Students",
@@ -55,7 +55,21 @@ SELECT DISTINCT b2."Logged by" AS Mentor,
     FROM base2 b2 LEFT JOIN base1 b1 
         ON b2."Logged by" = b1."Current Mentor"
                   LEFT JOIN table5 t5
-        ON b2."Logged by" = t5."Mentor";
+        ON b2."Logged by" = t5."Mentor")
+SELECT Mentor,
+    "Employment Type",
+    "Team Lead",
+    "No. of Students",
+    "Standard Hour / Student (2.5 hours)",
+    "No. of Student Transitioned",
+    "Total Time",
+    "Billable",
+    "Non Billable",
+    Total,
+    CASE WHEN Total < "Standard Hour / Student (2.5 hours)" THEN Total ELSE "Standard Hour / Student (2.5 hours)" END AS "Lesser of Allocated Hours & Billed Hours",
+    "Total Payment",
+    "HQ Remark"
+    FROM base3;
 
     """
 
@@ -75,9 +89,11 @@ SELECT DISTINCT b2."Logged by" AS Mentor,
     t3."Mentor Name",
     t3."Team Leader Name",
     b1."Country",
-    CASE WHEN t3."Date of meeting with student" > t4."Date of meeting with student" THEN t3."Date of meeting with student" ELSE t4."Date of meeting with student" 
-        WHEN LENGTH(t3."Date of meeting with student") > 0 AND LENGTH(t4."Date of meeting with student") = 0 THEN t3."Date of meeting with student"
-        WHEN LENGTH(t4."Date of meeting with student") > 0 AND LENGTH(t3."Date of meeting with student") = 0 THEN t4."Date of meeting with student"
+    CASE WHEN t3."Date of meeting with student" IS NULL AND t4."Date of meeting with student" IS NULL THEN NULL
+        WHEN t3."Date of meeting with student" IS NULL THEN t4."Date of meeting with student"
+        WHEN t4."Date of meeting with student" IS NULL THEN t3."Date of meeting with student"
+        WHEN t3."Date of meeting with student" > t4."Date of meeting with student" THEN t3."Date of meeting with student"
+        ELSE t4."Date of meeting with student"
         END AS "Last Date of meeting with student",
     CASE WHEN LENGTH(TRIM("Advising Hours")) > 0 THEN "Advising Hours" 
       ELSE 0 END AS "Advising Hours" 
@@ -111,8 +127,3 @@ SELECT DISTINCT b2."Logged by" AS Mentor,
         file_name="Payroll File.xlsx",
         mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
     )
-
-
-
-
-
