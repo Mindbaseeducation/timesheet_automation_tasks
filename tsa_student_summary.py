@@ -9,16 +9,15 @@ st.title("Timesheet Automation Task 4: Consolidated Student Summary")
 t1 = st.file_uploader("Upload Final Output File (CSV or Excel)", type=["csv", "xlsx"])
 t2 = st.file_uploader("Upload Master Data File for Country Mapping (CSV or Excel)", type=["csv", "xlsx"])
 t3 = st.file_uploader("Upload Last month's MPR for Student 1:1 Session Mapping (CSV or Excel)", type=["csv", "xlsx"])
-t4 = st.file_uploader("Upload Last to last month's MPR for Student 1:1 Session Mapping (CSV or Excel)", type=["csv", "xlsx"])
-t5 = st.file_uploader("Upload Mentors File to flag only the part-time mentors (CSV or Excel)", type=["csv", "xlsx"])
+t4 = st.file_uploader("Upload Mentors File to flag only the part-time mentors (CSV or Excel)", type=["csv", "xlsx"])
 
-if t1 and t2 and t3 and t4 and t5:
+if t1 and t2 and t3 and t4:
     # Helper function to load CSV/Excel
     def load_file(f):
         return pd.read_excel(f) if f.name.endswith("xlsx") else pd.read_csv(f)
 
     # Load all 2 files
-    df1, df2, df3, df4, df5 = load_file(t1), load_file(t2), load_file(t3), load_file(t4), load_file(t5)
+    df1, df2, df3, df4 = load_file(t1), load_file(t2), load_file(t3), load_file(t4)
 
     # Create SQLite in-memory DB
     conn = sqlite3.connect(":memory:")
@@ -26,7 +25,6 @@ if t1 and t2 and t3 and t4 and t5:
     df2.to_sql("table2", conn, index=False, if_exists="replace")
     df3.to_sql("table3", conn, index=False, if_exists="replace")
     df4.to_sql("table4", conn, index=False, if_exists="replace")
-    df5.to_sql("table5", conn, index=False, if_exists="replace")
 
     # SQL Query 1
     summary_query1 = """
@@ -41,7 +39,7 @@ base2 AS (SELECT "Logged by",
     SUM(CASE WHEN "Billable / Non Billable" = "Non Billable" THEN "Duration in hours" ELSE 0 END) OVER (PARTITION BY "Logged by") AS "Non Billable Hours"
     FROM table1),
 base3 AS (SELECT DISTINCT b2."Logged by" AS Mentor,
-    t5."Mentor Status" AS "Employment Type",
+    t4."Mentor Status" AS "Employment Type",
     b2."Team Lead",
     b1."No. of Students",
     b1."No. of Students"*2.5 AS "Standard Hour / Student (2.5 hours)",
@@ -54,8 +52,8 @@ base3 AS (SELECT DISTINCT b2."Logged by" AS Mentor,
     '' AS "HQ Remark"
     FROM base2 b2 LEFT JOIN base1 b1 
         ON b2."Logged by" = b1."Current Mentor"
-                  LEFT JOIN table5 t5
-        ON b2."Logged by" = t5."Mentor")
+                  LEFT JOIN table4 t4
+        ON b2."Logged by" = t4."Mentor")
 SELECT Mentor,
     "Employment Type",
     "Team Lead",
@@ -89,17 +87,10 @@ SELECT Mentor,
     t3."Mentor Name",
     t3."Team Leader Name",
     b1."Country",
-    CASE WHEN t3."Date of meeting with student" IS NULL AND t4."Date of meeting with student" IS NULL THEN NULL
-        WHEN t3."Date of meeting with student" IS NULL THEN t4."Date of meeting with student"
-        WHEN t4."Date of meeting with student" IS NULL THEN t3."Date of meeting with student"
-        WHEN t3."Date of meeting with student" > t4."Date of meeting with student" THEN t3."Date of meeting with student"
-        ELSE t4."Date of meeting with student"
-        END AS "Last Date of meeting with student",
+    t3."Date of meeting with student" AS "Date of meeting with student",
     COALESCE(b1."Advising Hours", 0) AS "Advising Hours"
     FROM base1 b1 LEFT JOIN table3 t3
-        ON b1."ADEK Applicant ID" = t3."Student ADEK Applicant ID"
-                  LEFT JOIN table4 t4
-        ON b1."ADEK Applicant ID" = t4."Student ADEK Applicant ID";
+        ON b1."ADEK Applicant ID" = t3."Student ADEK Applicant ID";
     
     """
 
@@ -126,4 +117,3 @@ SELECT Mentor,
         file_name="Payroll File.xlsx",
         mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
     )
-
