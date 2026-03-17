@@ -43,9 +43,9 @@ base4 AS (SELECT "PS Number",
         "Category",
         "Logged by",
         "Team Lead",
-         CASE WHEN LOWER("Entry Label") LIKE '%dec%' 
-             OR LOWER("Entry Label") LIKE '%jan%' 
-             OR LOWER("Entry Label") LIKE '%mar%' THEN "Task pertaining to previous or next month will not be paid"
+         CASE WHEN LOWER("Entry Label") LIKE '%jan%' 
+             OR LOWER("Entry Label") LIKE '%feb%' 
+             OR LOWER("Entry Label") LIKE '%apr%' THEN "Task pertaining to previous or next month will not be paid"
             WHEN "Duration in hours" > 12 THEN "Please rectify the AM/PM Error"
             ELSE "Audit Remark" END AS "Audit Remark",
         "TL Remark"
