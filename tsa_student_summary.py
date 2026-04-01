@@ -7,17 +7,18 @@ st.title("Timesheet Automation Task 4: Consolidated Student Summary")
 
 # Upload 2 CSV/Excel tables
 t1 = st.file_uploader("Upload Final Output File (CSV or Excel)", type=["csv", "xlsx"])
-t2 = st.file_uploader("Upload Master Data File for Country Mapping (CSV or Excel)", type=["csv", "xlsx"])
+t2 = st.file_uploader("Upload Master Data File (last month) for Country Mapping (CSV or Excel)", type=["csv", "xlsx"])
 t3 = st.file_uploader("Upload Last month's MPR for Student 1:1 Session Mapping (CSV or Excel)", type=["csv", "xlsx"])
 t4 = st.file_uploader("Upload Mentors File to flag only the part-time mentors (CSV or Excel)", type=["csv", "xlsx"])
+t5 = st.file_uploader("Upload Extraordinary Hours Request sheet of the last month (CSV or Excel)", type=["csv", "xlsx"])
 
-if t1 and t2 and t3 and t4:
+if t1 and t2 and t3 and t4 and t5:
     # Helper function to load CSV/Excel
     def load_file(f):
         return pd.read_excel(f) if f.name.endswith("xlsx") else pd.read_csv(f)
 
     # Load all 2 files
-    df1, df2, df3, df4 = load_file(t1), load_file(t2), load_file(t3), load_file(t4)
+    df1, df2, df3, df4, df5 = load_file(t1), load_file(t2), load_file(t3), load_file(t4), load_file(t5)
 
     # Create SQLite in-memory DB
     conn = sqlite3.connect(":memory:")
@@ -25,6 +26,7 @@ if t1 and t2 and t3 and t4:
     df2.to_sql("table2", conn, index=False, if_exists="replace")
     df3.to_sql("table3", conn, index=False, if_exists="replace")
     df4.to_sql("table4", conn, index=False, if_exists="replace")
+    df5.to_sql("table5", conn, index=False, if_exists="replace")
 
     # SQL Query 1
     summary_query1 = """
@@ -33,11 +35,13 @@ WITH base1 AS (SELECT "Current Mentor",
     COUNT(DISTINCT "ADEK Applicant ID") AS "No. of Students" 
     FROM table2
     GROUP BY 1),
+
 base2 AS (SELECT "Logged by",
     "Team Lead",
     SUM(CASE WHEN "Billable / Non Billable" = "Billable" THEN "Duration in hours" ELSE 0 END) OVER (PARTITION BY "Logged by") AS "Billable Hours",
     SUM(CASE WHEN "Billable / Non Billable" = "Non Billable" THEN "Duration in hours" ELSE 0 END) OVER (PARTITION BY "Logged by") AS "Non Billable Hours"
     FROM table1),
+
 base3 AS (SELECT DISTINCT b2."Logged by" AS Mentor,
     t4."Mentor Status" AS "Employment Type",
     b2."Team Lead",
@@ -53,21 +57,29 @@ base3 AS (SELECT DISTINCT b2."Logged by" AS Mentor,
     FROM base2 b2 LEFT JOIN base1 b1 
         ON b2."Logged by" = b1."Current Mentor"
                   LEFT JOIN table4 t4
-        ON b2."Logged by" = t4."Mentor")
-SELECT Mentor,
-    "Employment Type",
-    "Team Lead",
-    "No. of Students",
-    "Standard Hour / Student (2.5 hours)",
-    "No. of Student Transitioned",
-    "Total Time",
-    "Billable",
-    "Non Billable",
-    Total,
-    CASE WHEN Total < "Standard Hour / Student (2.5 hours)" THEN Total ELSE "Standard Hour / Student (2.5 hours)" END AS "Lesser of Allocated Hours & Billed Hours",
-    "Total Payment",
-    "HQ Remark"
-    FROM base3;
+        ON b2."Logged by" = t4."Mentor"),
+
+base4 AS (SELECT Mentor, 
+    SUM("Requested Extraordinary Hours") AS "Requested Extraordinary Hours" 
+    FROM table5 
+    GROUP BY 1)
+
+SELECT b3.Mentor,
+    b3."Employment Type",
+    b3."Team Lead",
+    b3."No. of Students",
+    b3."Standard Hour / Student (2.5 hours)",
+    b3."No. of Student Transitioned",
+    b3."Total Time",
+    b3."Billable",
+    b3."Non Billable",
+    b3.Total,
+    CASE WHEN b3.Total < b3."Standard Hour / Student (2.5 hours)" THEN b3.Total ELSE b3."Standard Hour / Student (2.5 hours)" END AS "Lesser of Allocated Hours & Billed Hours",
+    COALESCE(b4."Requested Extraordinary Hours", 0) AS "Requested Extraordinary Hours",
+    b3."Total Payment",
+    b3."HQ Remark"
+    FROM base3 b3 LEFT JOIN base4 b4 
+        ON b3.Mentor = b4.Mentor;
 
     """
 
