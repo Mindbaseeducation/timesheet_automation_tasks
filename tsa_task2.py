@@ -47,8 +47,7 @@ base4 AS (SELECT "PS Number",
              OR LOWER("Entry Label") LIKE '%feb%' 
              OR LOWER("Entry Label") LIKE '%apr%' THEN "Task pertaining to previous or next month will not be paid"
             WHEN "Duration in hours" > 12 THEN "Please rectify the AM/PM Error"
-            ELSE "Audit Remark" END AS "Audit Remark",
-        "TL Remark"
+            ELSE "Audit Remark" END AS "Audit Remark"
         FROM base3),
 base5 AS (SELECT CASE WHEN "Logged by" IN ('Claire Mangrum', 'Dr Fauzia Hasan Siddiqui', 'Dr. Rubi Garcha', 'Allison Houston', 'Erin Nelson', 'Thoywell Hemmings', 'Anna Cleto') 
         THEN ("Logged by" || ' - Administrative Profile')
@@ -76,8 +75,7 @@ base5 AS (SELECT CASE WHEN "Logged by" IN ('Claire Mangrum', 'Dr Fauzia Hasan Si
              AND ("Entry Label" LIKE '%PS2%' OR "Entry Label" LIKE '%PS3%' OR "Entry Label" LIKE '%PS4%' OR "Entry Label" LIKE '%PS5%')) THEN "Student task booked in admin profile. Please rectify" 
             WHEN DATE("Entry Label") IS NOT NULL THEN "Blank entry - Please delete"
             WHEN LOWER("Entry Label") LIKE '%(date)%' THEN "Dummy entry - Disapproved for payment"
-            ELSE "Audit Remark" END AS "Audit Remark",
-        "TL Remark"
+            ELSE "Audit Remark" END AS "Audit Remark"
         FROM base4),
 
 base6 AS (SELECT *, 
@@ -98,8 +96,7 @@ base7 AS (SELECT "PS Number",
      WHEN hours_summer > 3.5 AND LOWER("PS Number") NOT LIKE '%administrative profile%' AND "Logged by" NOT IN ('Claire Mangrum', 'Dr Fauzia Hasan Siddiqui', 'Dr. Rubi Garcha', 'Allison Houston', 'Erin Nelson', 'Thoywell Hemmings', 'Anna Cleto')
        THEN "Rectify the total time entered for this student"
      ELSE "Audit Remark"
-     END AS "Audit Remark",
-     "TL Remark"
+     END AS "Audit Remark"
     FROM base6),
 base8 AS (SELECT "PS Number",
      "Student Full Name",
@@ -117,8 +114,7 @@ base8 AS (SELECT "PS Number",
      "Team Lead",
       CASE WHEN LOWER("Entry Label") LIKE '%no response%' AND "Duration in minutes" > 0 THEN "Rectify the minutes entered for no response"
       WHEN "Audit Remark" = "No show > 20 min - Disapproved for payment" THEN "No show > 20 min - Disapproved for payment"
-      ELSE "Audit Remark" END AS "Audit Remark",
-     "TL Remark"
+      ELSE "Audit Remark" END AS "Audit Remark"
     FROM base7)
 SELECT "PS Number",
      "Student Full Name",
@@ -139,8 +135,7 @@ SELECT "PS Number",
      WHEN LOWER("Entry Label") = 'missed meeting' THEN "Rectify the entry label as per SOP"
      WHEN (LOWER("Entry Label") = 'mpr' OR LOWER("Entry Label") LIKE '%report%') AND LOWER("PS Number") NOT LIKE '%administrative profile%' THEN "Reporting needs to be in Admin Profile"
      WHEN (LOWER("Entry Label") LIKE '%student task%' OR LOWER("Entry Label") LIKE '%student comm%') AND LOWER("PS Number") LIKE '%administrative profile%' THEN "Student task booked in admin profile. Please rectify"
-     ELSE "Audit Remark" END AS "Audit Remark",
-     "TL Remark"
+     ELSE "Audit Remark" END AS "Audit Remark"
     FROM base8;
     
     """
