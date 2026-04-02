@@ -36,8 +36,7 @@ if t1 and t2 and t3:
         TRIM("Billable") AS "Billable / Non Billable",
         '' AS "Category",
         TRIM("Logged by") AS "Logged by",
-        '' AS "Audit Remark",
-        '' AS "TL Remark"
+        '' AS "Audit Remark"
     FROM table1
 ),
 base2 AS (
@@ -72,7 +71,6 @@ base4 AS (SELECT
     "Duration in hours",
     "Logged by",
     "Audit Remark",
-    "TL Remark",
     "Team Lead"
     FROM base3)
 
@@ -86,8 +84,7 @@ SELECT "PS Number",
 "Category",
 "Logged by",
 "Team Lead",
-"Audit Remark",
-"TL Remark"
+"Audit Remark"
 FROM base4;
 
     """
