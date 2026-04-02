@@ -33,27 +33,24 @@ WITH base1 AS (SELECT "Logged by",
     WHERE "Logged by" NOT IN ('Claire Mangrum', 'Dr Fauzia Hasan Siddiqui', 'Dr. Rubi Garcha', 'Allison Houston', 'Erin Nelson', 'Thoywell Hemmings')
     GROUP BY 1,2)
 SELECT b1.*, t2."Team Lead",
-       CASE WHEN b1."Total hours" > 8 AND b1."Logged by" IN (SELECT Mentor FROM table2 WHERE "Mentor Status" = "Part Time")
-       THEN "Part Time Mentor spent more than 8 hours on the students on this day. Please review"
+       CASE WHEN b1."Total hours" > 8 THEN "Part Time Mentor spent more than 8 hours on the students on this day. Please review"
        END AS "HQ Remark"
     FROM base1 b1 LEFT JOIN table2 t2 ON b1."Logged by" = t2.Mentor
+    WHERE t2."Mentor Status" = "Part Time"
     ORDER BY 1,2;
 
     """
 
     query2 = """
-WITH base1 AS (SELECT "PS Number", 
+SELECT "PS Number", 
         COUNT(*) AS "No Show Count"
     FROM table1
       WHERE LOWER("PS Number") NOT LIKE '%administrative profile%'
         AND (LOWER("Entry Label") LIKE '%no show%' OR LOWER("Entry Label") = 'missed meeting'
              OR LOWER("Entry Label") LIKE '%ns1%' OR LOWER("Entry Label") LIKE '%ns2%' OR LOWER("Entry Label") LIKE '%ns3%'
              OR LOWER("Entry Label") LIKE '%ns 1%' OR LOWER("Entry Label") LIKE '%ns 2%' OR LOWER("Entry Label") LIKE '%ns 3%')
-    GROUP BY 1)
-
-SELECT *, 
-       CASE WHEN "No Show Count" > 2 THEN "No show count for this student > 2. Please rectify the entry as per the SOP." END AS "Audit Remark"
-    FROM base1;
+    GROUP BY 1
+    HAVING COUNT(*) > 2;
     
     """
 
