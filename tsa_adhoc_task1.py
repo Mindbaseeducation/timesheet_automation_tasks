@@ -30,9 +30,9 @@ WITH base1 AS (SELECT "Logged by",
         SUM("Duration in minutes") AS "Total minutes",
         SUM("Duration in hours") AS "Total hours"
     FROM table1
-    WHERE "Logged by" NOT IN ('Claire Mangrum', 'Dr Fauzia Hasan Siddiqui', 'Dr. Rubi Garcha', 'Allison Houston', 'Erin Nelson', 'Thoywell Hemmings')
+    WHERE "Logged by" NOT IN ('Dr Fauzia Hasan Siddiqui', 'Dr. Rubi Garcha', 'Allison Houston', 'Thoywell Hemmings')
     GROUP BY 1,2)
-SELECT b1.*, t2."Team Lead",
+SELECT b1.*, t2."Regional Manager",
        CASE WHEN b1."Total hours" > 8 THEN "Part Time Mentor spent more than 8 hours on the students on this day. Please review"
        END AS "HQ Remark"
     FROM base1 b1 LEFT JOIN table2 t2 ON b1."Logged by" = t2.Mentor
