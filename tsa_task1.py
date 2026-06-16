@@ -46,7 +46,7 @@ base2 AS (
         ON LOWER(b1."Student Full Name") = LOWER(TRIM(t2."Student Name"))
 ),
 base3 AS (
-    SELECT b2.*, t3."Team Lead"
+    SELECT b2.*, t3."Regional Manager"
     FROM base2 b2
     LEFT JOIN table3 t3
         ON LOWER(b2."Logged by") = LOWER(t3."Mentor")
@@ -71,7 +71,7 @@ base4 AS (SELECT
     "Duration in hours",
     "Logged by",
     "Audit Remark",
-    "Team Lead"
+    "Regional Manager"
     FROM base3)
 
 SELECT "PS Number",
@@ -83,7 +83,7 @@ SELECT "PS Number",
 "Billable / Non Billable",
 "Category",
 "Logged by",
-"Team Lead",
+"Regional Manager",
 "Audit Remark"
 FROM base4;
 
