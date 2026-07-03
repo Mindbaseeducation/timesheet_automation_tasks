@@ -95,7 +95,7 @@ SELECT b3.Mentor,
     SELECT b1."ADEK Applicant ID",
     b1."Student Name",
     t3."Mentor Name",
-    t3."Team Leader Name",
+    t3."Regional Manager Name",
     b1."Country",
     t3."Date of meeting with student" AS "Date of meeting with student",
     COALESCE(b1."Advising Hours", 0) AS "Advising Hours"
