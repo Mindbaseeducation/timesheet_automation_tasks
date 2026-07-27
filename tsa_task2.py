@@ -31,7 +31,7 @@ base2 AS (SELECT *
         ),
 base3 AS (SELECT *
     FROM base2
-    WHERE "Logged by" IN ('Dr Fauzia Hasan Siddiqui', 'Dr. Rubi Garcha', 'Allison Houston', 'Thoywell Hemmings')
+    WHERE "Logged by" IN ('David Anthony Lodge', 'Dr. Rubi Garcha', 'Allison Houston', 'Thoywell Hemmings')
     OR LOWER("Entry Label") NOT LIKE '%timesheet%'),
 base4 AS (SELECT "PS Number",
         "Student Full Name",
@@ -43,13 +43,13 @@ base4 AS (SELECT "PS Number",
         "Category",
         "Logged by",
         "Regional Manager",
-         CASE WHEN LOWER("Entry Label") LIKE '%april%' 
-             OR LOWER("Entry Label") LIKE '%may%' 
-             OR LOWER("Entry Label") LIKE '%july%' THEN "Task pertaining to previous or next month will not be paid"
+         CASE WHEN LOWER("Entry Label") LIKE '%may%' 
+             OR LOWER("Entry Label") LIKE '%june%' 
+             OR LOWER("Entry Label") LIKE '%august%' THEN "Task pertaining to previous or next month will not be paid"
             WHEN "Duration in hours" > 12 THEN "Please rectify the AM/PM Error"
             ELSE "Audit Remark" END AS "Audit Remark"
         FROM base3),
-base5 AS (SELECT CASE WHEN "Logged by" IN ('Dr Fauzia Hasan Siddiqui', 'Dr. Rubi Garcha', 'Allison Houston', 'Thoywell Hemmings') 
+base5 AS (SELECT CASE WHEN "Logged by" IN ('David Anthony Lodge', 'Dr. Rubi Garcha', 'Allison Houston', 'Thoywell Hemmings') 
         THEN ("Logged by" || ' - Administrative Profile')
         ELSE "PS Number" END AS "PS Number",
         "Student Full Name",
@@ -71,7 +71,7 @@ base5 AS (SELECT CASE WHEN "Logged by" IN ('Dr Fauzia Hasan Siddiqui', 'Dr. Rubi
              OR LOWER("Entry Label") LIKE '%ns1%' OR LOWER("Entry Label") LIKE '%ns2%' OR LOWER("Entry Label") LIKE '%ns3%'
              OR LOWER("Entry Label") LIKE '%ns 1%' OR LOWER("Entry Label") LIKE '%ns 2%' OR LOWER("Entry Label") LIKE '%ns 3%')
              AND ("Duration in minutes" > 20) THEN "No show > 20 min - Disapproved for payment"
-            WHEN ("Logged by" NOT IN ('Dr Fauzia Hasan Siddiqui', 'Dr. Rubi Garcha', 'Allison Houston', 'Thoywell Hemmings') AND LOWER("PS Number") LIKE '%administrative profile%'
+            WHEN ("Logged by" NOT IN ('David Anthony Lodge', 'Dr. Rubi Garcha', 'Allison Houston', 'Thoywell Hemmings') AND LOWER("PS Number") LIKE '%administrative profile%'
              AND ("Entry Label" LIKE '%PS2%' OR "Entry Label" LIKE '%PS3%' OR "Entry Label" LIKE '%PS4%' OR "Entry Label" LIKE '%PS5%')) THEN "Student task booked in admin profile. Please rectify" 
             WHEN DATE("Entry Label") IS NOT NULL THEN "Blank entry - Please delete"
             WHEN LOWER("Entry Label") LIKE '%(date)%' THEN "Dummy entry - Disapproved for payment"
@@ -93,7 +93,7 @@ base7 AS (SELECT "PS Number",
      "Regional Manager",
      CASE WHEN "Audit Remark" = "Please rectify the AM/PM Error" 
        THEN "Please rectify the AM/PM Error"
-     WHEN hours_summer > 3.5 AND LOWER("PS Number") NOT LIKE '%administrative profile%' AND "Logged by" NOT IN ('Dr Fauzia Hasan Siddiqui', 'Dr. Rubi Garcha', 'Allison Houston', 'Thoywell Hemmings')
+     WHEN hours_summer > 3.5 AND LOWER("PS Number") NOT LIKE '%administrative profile%' AND "Logged by" NOT IN ('David Anthony Lodge', 'Dr. Rubi Garcha', 'Allison Houston', 'Thoywell Hemmings')
        THEN "Rectify the total time entered for this student"
      ELSE "Audit Remark"
      END AS "Audit Remark"
