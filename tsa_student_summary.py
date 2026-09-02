@@ -31,7 +31,7 @@ if t1 and t2 and t3 and t4 and t5:
     # SQL Query 1
     summary_query1 = """
 
-WITH base1 AS (SELECT "Mentor", 
+WITH base1 AS (SELECT "Current Mentor" AS "Mentor", 
     COUNT(DISTINCT "ADEK Applicant ID") AS "No. of Students" 
     FROM table2
     GROUP BY 1),
